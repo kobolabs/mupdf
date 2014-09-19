@@ -39,6 +39,8 @@ CFLAGS += $(OPENJPEG_CFLAGS)
 CFLAGS += $(OPENSSL_CFLAGS)
 CFLAGS += $(ZLIB_CFLAGS)
 
+CFLAGS += -fPIC
+
 # --- Commands ---
 
 ifneq "$(verbose)" "yes"
@@ -129,10 +131,14 @@ $(TIFF_OBJ) : $(FITZ_HDR) $(IMG_HDR) $(TIFF_SRC_HDR)
 # --- Library ---
 
 MUPDF_LIB := $(OUT)/libmupdf.a
+MUPDF_SO_LIB = $(MUPDF_LIB:.a=.so)
 
 $(MUPDF_LIB) : $(FITZ_OBJ) $(PDF_OBJ) $(XPS_OBJ) $(CBZ_OBJ) $(IMG_OBJ) $(TIFF_OBJ)
 
-INSTALL_LIBS := $(MUPDF_LIB)
+$(MUPDF_SO_LIB) : $(FITZ_OBJ) $(PDF_OBJ) $(XPS_OBJ) $(CBZ_OBJ) $(IMG_OBJ) $(TIFF_OBJ)
+	$(LINK_CMD) $(LIBS) $(THIRD_LIBS) -shared
+
+INSTALL_LIBS := $(MUPDF_LIB) $(MUPDF_SO_LIB)
 
 # --- Rules ---
 
@@ -341,7 +347,7 @@ cscope.files: $(shell find include source platform -name '*.[ch]')
 cscope.out: cscope.files
 	cscope -b
 
-all: libs apps
+all: third libs apps
 
 clean:
 	rm -rf $(OUT)
