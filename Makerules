@@ -48,9 +48,9 @@ SYS_JBIG2DEC_LIBS = -ljbig2dec
 SYS_JPEG_LIBS = -ljpeg
 SYS_ZLIB_LIBS = -lz
 
-CC = xcrun cc
+CC = xcrun clang -arch i386
 AR = xcrun ar
-LD = xcrun ld
+LD = xcrun ld -arch i386
 RANLIB_CMD = xcrun ranlib $@
 
 # Linux uses pkg-config for system libraries.
