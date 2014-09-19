@@ -128,6 +128,7 @@ static fz_colorspace *colorspace;
 static char *filename;
 static int files = 0;
 fz_output *out = NULL;
+static int count_pages = 0;
 
 static struct {
 	int count, total;
@@ -165,6 +166,7 @@ static void usage(void)
 		"\t-l\tprint outline\n"
 		"\t-T\ttest for features (grayscale or color)\n"
 		"\t-i\tignore errors and continue with the next file\n"
+		"\t-C\tcount pages\n"
 		"\tpages\tcomma separated list of ranges\n");
 	exit(1);
 }
@@ -836,7 +838,7 @@ int main(int argc, char **argv)
 
 	fz_var(doc);
 
-	while ((c = fz_getopt(argc, argv, "lo:F:p:r:R:b:c:dgmTtx5G:Iw:h:fiMB:")) != -1)
+	while ((c = fz_getopt(argc, argv, "lo:F:p:r:R:b:c:CdgmTtx5G:Iw:h:fiMB:")) != -1)
 	{
 		switch (c)
 		{
@@ -863,6 +865,7 @@ int main(int argc, char **argv)
 		case 'f': fit = 1; break;
 		case 'I': invert++; break;
 		case 'i': ignore_errors = 1; break;
+		case 'C': count_pages = 1; break;
 		default: usage(); break;
 		}
 	}
@@ -1048,6 +1051,11 @@ int main(int argc, char **argv)
 				{
 					if (!fz_authenticate_password(doc, password))
 						fz_throw(ctx, FZ_ERROR_GENERIC, "cannot authenticate password: %s", filename);
+				}
+
+				if (count_pages) {
+					printf("%d\n", fz_count_pages(doc));
+					exit(0);
 				}
 
 				if (showxml || showtext == TEXT_XML)
