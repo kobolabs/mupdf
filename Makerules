@@ -96,6 +96,14 @@ endif
 #   2) do a non cross compile build (e.g. windows in MSVC) first.
 #   3) download the generated files from mupdf.com.
 
+ifeq "$(OS)" "kobo-cross"
+CC = arm-linux-gcc
+LD = arm-linux-gcc
+AR = arm-linux-ar
+CFLAGS += -O3 -march=armv7-a -mfpu=neon -mfloat-abi=hard -fno-tree-vectorize -fno-omit-frame-pointer
+CROSSCOMPILE=yes
+endif
+
 ifeq "$(OS)" "beagle-cross"
 CC = arm-none-linux-gnueabi-gcc
 LD = arm-none-linux-gnueabi-gcc
